@@ -1,12 +1,22 @@
+# Acceptance tests
+
+## OAuth2 passport strategy tests
+
+- The test file
+  `authentication-with-passport-strategy-oauth2-adapter.acceptance` consists of
+  three main components:
+
+  A. the Supertest client
+
+  B. a LoopBack app (fixtures/simple-rest-app.ts) - has a simple app with no
+  controller, Oauth2Controller is added during the test run
+
+  C. Mock Authorization Server (fixtures/mock-oauth2-social-app.ts) - mocks the
+  authorization flow login with a social app like facebook, google, etc
+
+### Test steps:
+
 ```
-  The test file `authentication-with-passport-strategy-oauth2-adapter.acceptance` consists of three main components -> the supertest client, the LoopBack app (simple-rest-app.ts) and the Mock Authorization Server (mock-oauth2-social-app.ts)
-
-   Mock Authorization Server (mock-oauth2-social-app.ts) :
-            mocks the authorization flow login with a social app like facebook, google, etc
-   LoopBack app (simple-rest-app.ts) :
-            has a simple app with no controller, Oauth2Controller is added in this test
-
-  Test steps:
   A. an Oauth2Controller is added to LB App : defines two endpoints `/auth/thirdparty` and `/auth/thirdparty/callback`
   B. start LB app and Mock Authorization Server
   C. Test stage 1 : Authorization code grant - Get access code
@@ -24,7 +34,7 @@
   |            |                                                              | LoopBack App |
   | web client |     -------------------[1]--------------------->             | (simple-rest |
   | (supertest)|     auth request to LB App on behalf of a user,              |  -app.ts)    |
-  |            |     payload: {'client_id': , 'secret': }                     |   ***         |
+  |            |     payload: {'client_id': , 'secret': }                     | ***          |
   |            |                                                              |  ^           |
   |            |              +---------------+                               |  |           |
   |            |              |               | <---------[2]-------------    |  |           |
@@ -40,7 +50,7 @@
   |            |              |               |<---+ passed as hidden params  |  |           |
   |            |              |               |                               |  |           |
   |            | -----[4]---> |               |                               |  v           |
-  |            |   login with |               | -------[5]------------->      |   ***         |
+  |            |   login with |               | -------[5]------------->      | ***          |
   |            |    user name |               | login success, auth server    |  ^           |
   |            |    /password |               | redirects browser to callback |  |           |
   |            |              |               | url with access_code          |  |           |
@@ -52,6 +62,6 @@
   |            |              |               | ---------------[7]--------->  |  |           |
   |            |              +---------------+       returns access token    |  |           |
   |            |                                                              |  v           |
-  |            |      <------------------------[8]-----------------------     |   ***         |
+  |            |      <------------------------[8]-----------------------     | ***          |
   +------------+        LB App returns to browser the access token            +--------------+
 ```

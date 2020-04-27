@@ -12,7 +12,7 @@ Missing instructions for your LoopBack 3 use case? Please report a [Migration do
 
 # Migrating Passport Strategies
 
-This page guides on migrating lb3 apps that used
+This page is a guide to migrate LB3 apps that use
 [Passport Strategies](http://www.passportjs.org/) for authentication usecases.
 Before following this guide, please know more about the
 [@loopback/authentication-passport](https://loopback.io/doc/en/lb4/Authentication-passport.html)
@@ -21,8 +21,8 @@ package.
 ## Differences between LoopBack 3 and LoopBack 4
 
 In LoopBack 3, routes can be configured explicitly as authentication providers
-using express style passport strategies middleware. Also the
-[lb3 passport component](https://github.com/strongloop/loopback-component-passport)
+using Express style passport strategies middleware. Also the
+[LB3 passport component](https://github.com/strongloop/loopback-component-passport)
 helped with implicit authentication configuration using json files. It had
 built-in model classes to search users and persist user identities.
 
@@ -31,60 +31,60 @@ In LoopBack 4, authentication endpoints are configured in controllers and the
 API route. Also the
 [@loopback/authentication-passport](https://loopback.io/doc/en/lb4/Authentication-passport.html)
 package is necessary to bridge between passport strategies and the
-authentication design of lb4.
+authentication design of LB4.
 
 ## An example passport login app
 
 To demonstrate how to implement passport strategies in LoopBack 4 and migrate
-LB3 apps
-using[loopback-component-passport](https://github.com/strongloop/loopback-component-passport),
+LB3 apps using
+[loopback-component-passport](https://github.com/strongloop/loopback-component-passport),
 a
 [passport-login](https://github.com/strongloop/loopback-next/tree/master/examples/passport-login)
 example app is now available.
 
 This example is migrated from
 [loopback-example-passport](https://github.com/strongloop/loopback-example-passport),
-It demonstrates how to use the LoopBack 4 features (like @authenticate
-decorator, strategy providers, etc) with passport strategies. It includes the
-oauth2 strategies to interact with external OAuth providers like facebook,
-google,etc as well as local and basic strategies.
+it demonstrates how to use the LoopBack 4 features (like @authenticate
+decorator, strategy providers, etc) with passport strategies. It includes OAuth2
+strategies to interact with external OAuth providers like Facebook, Google, etc
+as well as local and basic strategies.
 
 Take a look at the test cases of the
 [example app](https://github.com/strongloop/loopback-next/tree/master/examples/passport-login)
 and the
-[mock social app for testing](https://github.com/strongloop/loopback-next/tree/master/extensions/authentication-passport/src/__tests__/acceptance/fixtures)
+[mock social app for testing](https://github.com/strongloop/loopback-next/tree/master/extensions/authentication-passport/src/__tests__/acceptance)
 
-You can use this example to see how to,
+You can use this example to see how to:
 
-- Log in or Sign up into a LoopBack App using passport strategy modules
+- Log in or sign up into a LoopBack application using passport strategy modules
 - Log in via external apps like Facebook or link those external profiles with a
   LoopBack user (for example, a LoopBack user can have associated
-  facebook/google accounts to retrieve pictures).
+  Facebook/Google accounts to retrieve pictures).
 - Use basic or local passport strategy modules
 
 This guide is further divided into two sections:
 
 - [How to migrate Non-OAuth2 strategies like basic, local, etc ?](#Non-OAuth2-Strategies)
-- [How to migrate OAuth2 strategies like facebook, google, etc ?](#OAuth2-Strategies)
+- [How to migrate OAuth2 strategies like Facebook, Google, etc ?](#OAuth2-Strategies)
 
-In each of these sections the following are explained :
+In each of these sections the following are explained:
 
-A. Configuring Authentication Endpoints : Authentication endpoints are
-controller methods that validate user credentials and provides the caller with a
+A. Configuring Authentication Endpoints: Authentication/Login endpoints are
+controller methods that validate user credentials and provide the caller with a
 login session which is usually represented by an access token or a cookie.
 
-B. Strategy Providers : In LoopBack4 passport strategies will have to be
-injected into the authentication using provider classes.
+B. Strategy Providers: In LoopBack4 passport strategies will have to be injected
+into the authentication using provider classes.
 
 ## Non OAuth2 Strategies
 
-- How to use passport strategies for authentication schemes like basic, local,
-  etc
-- These authentication schemes validates users immediately without the need for
-  redirection ie., authentication happends in a single phase in one
+- How to implement authentication schemes like basic, local, etc using passport
+  strategies
+- These authentication schemes validate users immediately without the need for
+  redirection ie., authentication happens in a single phase in one
   request-response cycle.
 
-### Authentication Endpoints
+### Configuring Authentication Endpoints
 
 - declare the `@authenticate` decorator before controller methods that needs
   access control
@@ -173,8 +173,9 @@ export class BasicStrategy implements AuthenticationStrategy {
 }
 ```
 
-- Passport strategies also require a verify function to validate user
-  credentials in the request. Include the verify function in the provider class.
+- Passport strategies also require a `verify` function to validate user
+  credentials in the request. Include the `verify` function in the provider
+  class.
 
 ```ts
   /**
@@ -231,12 +232,12 @@ export class UserApplication extends BootMixin(
 ## OAuth2 Strategies
 
 - how to use passport strategies for oauth2 authorization flow with external
-  social apps like facebook.
+  social apps like Facebook.
 - this involves redirecting to an external app and user entering credentials in
   that app's login page.
 - this usecase includes multiple phases of authentication.
 
-### Authentication Endpoints
+### Configuring Authentication Endpoints
 
 - For OAuth2 authorizaton flow, we need authentication endpoints that
   participate to get the user validated with an external system.
@@ -248,7 +249,7 @@ export class UserApplication extends BootMixin(
 - One of the endpoints is for redirecting to the external provider app and the
   other is for getting called back by the external app.
 
-  - Create a controller with authentication endpoints as in below example
+  - Create a controller with authentication endpoints as in below example:
 
     - A method to redirect to the third party app (method `loginToThirdParty` in
       the below example)
@@ -268,10 +269,10 @@ export class UserApplication extends BootMixin(
         with the access token
 
 ```ts
-  @authenticate('oauth2-facebook')
-  @get('/auth/thirdparty/facebook')
+  @authenticate('oauth2-Facebook')
+  @get('/auth/thirdparty/Facebook')
   /**
-   * Endpoint: '/auth/thirdparty/facebook'
+   * Endpoint: '/auth/thirdparty/Facebook'
    *          an endpoint for api clients to login via FaceBook, redirects to FaceBook
    */
   loginToThirdParty(
@@ -288,10 +289,10 @@ export class UserApplication extends BootMixin(
     return response;
   }
 
-  @authenticate('oauth2-facebook')
-  @get('/auth/thirdparty/facebook/callback')
+  @authenticate('oauth2-Facebook')
+  @get('/auth/thirdparty/Facebook/callback')
   /**
-   * Endpoint: '/auth/thirdparty/facebook/callback'
+   * Endpoint: '/auth/thirdparty/Facebook/callback'
    *          an endpoint which serves as a oauth2 callback for FaceBook
    *          this endpoint sets the user profile in the session
    */
@@ -312,7 +313,7 @@ export class UserApplication extends BootMixin(
 - Once `thirdPartyCallBack` endpoint has the profile from the external
   authentication, it can proceed in three (or more) different ways.
   - It can create a browser session. This is the most popular one we use
-    everyday to login to an app using facebook/google credentials. This means
+    everyday to login to an app using Facebook/Google credentials. This means
     the client from there on would use the passport-session strategy to access
     other Usecase endpoints in the LoopBack App (session strategy).
   - it can return the original oauth token from the third-party to the web
@@ -334,21 +335,21 @@ export class UserApplication extends BootMixin(
   extensionFor(PassportAuthenticationBindings.OAUTH2_STRATEGY),
 )
 export class FaceBookOauth2Authorization implements AuthenticationStrategy {
-  name = 'oauth2-facebook';
+  name = 'oauth2-Facebook';
   protected strategy: StrategyAdapter<User>;
   passportstrategy: Strategy;
 
   /**
-   * create an oauth2 strategy for facebook
+   * create an oauth2 strategy for Facebook
    */
   constructor(
     @inject(UserServiceBindings.PASSPORT_USER_IDENTITY_SERVICE)
     public userService: UserIdentityService<Profile, User>,
-    @inject('facebookOAuth2Options')
-    public facebookOptions: StrategyOption,
+    @inject('FacebookOAuth2Options')
+    public FacebookOptions: StrategyOption,
   ) {
     this.passportstrategy = new Strategy(
-      facebookOptions,
+      FacebookOptions,
       verifyFunctionFactory(userService).bind(this),
     );
     this.strategy = new StrategyAdapter(
